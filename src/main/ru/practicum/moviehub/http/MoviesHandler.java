@@ -105,7 +105,7 @@ public class MoviesHandler extends BaseHttpHandler {
                 sendJson(ex, 422, jsonError);
                 return;
             }
-                    if(movie.getYear() < 1888 || movie.getYear() > 2026) {
+                    if (movie.getYear() < 1888 || movie.getYear() > 2026) {
                 ErrorResponse errorResponse = new ErrorResponse(
                         "Ошибка валидации.",
                         "Год должен быть между 1888 и 2026.");
