@@ -135,7 +135,7 @@ public class MoviesHandler extends BaseHttpHandler {
 
     private void handleGetMoviesByYear(HttpExchange ex) throws IOException {
         String query = ex.getRequestURI().getQuery();
-        if ( query == null || query.isEmpty()) {
+        if (query == null || query.isEmpty()) {
             sendJson(ex, 400, gson.toJson(new ErrorResponse("Ошибка запроса.",
                     "Формат запроса не соответствует ожидаемому GET/movies/?year=YYYY")));
          return;
@@ -154,7 +154,7 @@ public class MoviesHandler extends BaseHttpHandler {
                     "Некорректный параметр запроса — 'year'. Год должен быть целым числом между 1888 и 2026.")));
             return;
         }
-        if (currentYear < 1888 || currentYear > 2026 ) {
+        if (currentYear < 1888 || currentYear > 2026) {
             ErrorResponse errorResponse = new ErrorResponse(
                     "Ошибка в годе.",
                     "Некорректный параметр запроса — 'year'. Год должен быть целым числом между 1888 и 2026.");
