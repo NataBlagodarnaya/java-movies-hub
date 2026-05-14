@@ -134,6 +134,26 @@ public class MoviesApiTest {
         assertEquals(1, moviesStore.getMovies().get(1).getId(), "Id фильма");
     }
 
+    //возвращает ошибку если отсутствует тело запроса
+    @Test
+    void postMovie_returnError_ifEmptyBody() throws Exception {
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/movies"))
+                .header("Content-Type", "application/json; charset=UTF-8")
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        HttpResponse<String> resp =
+                client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+
+        assertEquals(400, resp.statusCode(), "POST /movies должен вернуть 400");
+
+        JsonObject jsonObject = getErrorResponse(resp);
+        assertEquals("Ошибка формата.", jsonObject.get("error").getAsString(), "Ошибка формата.");
+        assertEquals("Отсутствует тело запроса.",
+                jsonObject.get("details").getAsString(), "Ошибка формата.");
+    }
+
     // возвращает ошибку при пустом title
     @Test
     void returnError_ifEmptyTitle() throws Exception {
@@ -150,8 +170,7 @@ public class MoviesApiTest {
 
         JsonObject jsonObject = getErrorResponse(resp);
         assertEquals("Ошибка валидации.", jsonObject.get("error").getAsString(), "Ошибка валидации");
-        assertEquals("Название не должно быть пустым или содержать более 100 символов," +
-                        " год должен быть между 1888 и 2026",
+        assertEquals("Название не должно быть пустым или содержать более 100 символов.",
                 jsonObject.get("details").getAsString(), "Ошибка валидации");
     }
 
@@ -172,8 +191,7 @@ public class MoviesApiTest {
 
         JsonObject jsonObject = getErrorResponse(resp);
         assertEquals("Ошибка валидации.", jsonObject.get("error").getAsString(), "Ошибка валидации");
-        assertEquals("Название не должно быть пустым или содержать более 100 символов," +
-                        " год должен быть между 1888 и 2026",
+        assertEquals("Название не должно быть пустым или содержать более 100 символов.",
                 jsonObject.get("details").getAsString(), "Ошибка валидации");
     }
 
@@ -193,8 +211,7 @@ public class MoviesApiTest {
 
         JsonObject jsonObject = getErrorResponse(resp);
         assertEquals("Ошибка валидации.", jsonObject.get("error").getAsString(), "Ошибка валидации");
-        assertEquals("Название не должно быть пустым или содержать более 100 символов," +
-                        " год должен быть между 1888 и 2026",
+        assertEquals("Год должен быть между 1888 и 2026.",
                 jsonObject.get("details").getAsString(), "Ошибка валидации");
     }
 

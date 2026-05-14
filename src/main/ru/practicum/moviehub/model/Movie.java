@@ -1,9 +1,9 @@
 package ru.practicum.moviehub.model;
 
 public class Movie {
-String title;
-int year;
-int id;
+    private final String title;
+    private final int year;
+    private int id;
 
     public Movie(String title, int year) {
         this.title = title;

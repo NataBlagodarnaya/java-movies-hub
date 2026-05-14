@@ -10,7 +10,6 @@ import ru.practicum.moviehub.store.MoviesStore;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 
 public class MoviesHandler extends BaseHttpHandler {
@@ -91,16 +90,25 @@ public class MoviesHandler extends BaseHttpHandler {
         InputStream is = ex.getRequestBody();
         try {
             String reqBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            if (reqBody.isEmpty()) {
+                sendJson(ex, 400, gson.toJson(new ErrorResponse("Ошибка формата.",
+                        "Отсутствует тело запроса.")));
+                return;
+            }
             Movie movie = gson.fromJson(reqBody, Movie.class);
 
-            if (movie.getTitle() == null ||
-                    movie.getTitle().length() > 100 ||
-                    movie.getYear() < 1888 ||
-                    movie.getYear() > 2026) {
+            if (movie.getTitle() == null || movie.getTitle().length() > 100) {
                 ErrorResponse errorResponse = new ErrorResponse(
                         "Ошибка валидации.",
-                        "Название не должно быть пустым или содержать более 100 символов," +
-                                " год должен быть между 1888 и 2026");
+                        "Название не должно быть пустым или содержать более 100 символов.");
+                String jsonError = gson.toJson(errorResponse);
+                sendJson(ex, 422, jsonError);
+                return;
+            }
+                    if(movie.getYear() < 1888 || movie.getYear() > 2026) {
+                ErrorResponse errorResponse = new ErrorResponse(
+                        "Ошибка валидации.",
+                        "Год должен быть между 1888 и 2026.");
                 String jsonError = gson.toJson(errorResponse);
                 sendJson(ex, 422, jsonError);
                 return;
@@ -162,10 +170,7 @@ public class MoviesHandler extends BaseHttpHandler {
             sendJson(ex, 400, jsonError);
             return;
         }
-        List<Movie> moviesByYear = moviesStore.getMovies().values().stream()
-                .filter(movie -> movie.getYear() == currentYear)
-                .toList();
-        String json = gson.toJson(moviesByYear);
+        String json = gson.toJson(moviesStore.getMoviesByYear(currentYear));
         sendJson(ex, 200, json);
     }
 }
