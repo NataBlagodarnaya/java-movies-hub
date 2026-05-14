@@ -1,7 +1,5 @@
 package ru.practicum.moviehub.model;
 
-import java.util.Objects;
-
 public class Movie {
 String title;
 int year;
